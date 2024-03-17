@@ -5,6 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StartSearch</title>
+
+
+    <script>
+        const DEFAULT_CONFIG = {
+            "definitions": [
+                {
+                    "title": "DuckDuckGo",
+                    "url_tmpl": "https://duckduckgo.com/?t=h_&q=%s",
+                    "shortcuts": [
+                        "d",
+                        "ddg"
+                    ]
+                },
+                {
+                    "title": "Google",
+                    "url_tmpl": "https://www.google.com/search?q=114514",
+                    "shortcuts": [
+                        "g"
+                    ]
+                },
+                {
+                    "title": "Wikipedia (EN)",
+                    "url_tmpl": "https://en.wikipedia.org/w/index.php?search=%s&title=Special%3ASearch&ns0=1",
+                    "shortcuts": [
+                        "wp", "wpen"
+                    ]
+                },
+                {
+                    "title": "Wikipedia (ZH)",
+                    "url_tmpl": "https://zh.wikipedia.org/w/index.php?title=Special:%E6%90%9C%E7%B4%A2&ns0=1&search=%s",
+                    "shortcuts": [
+                        "wpzh"
+                    ]
+                }
+            ]
+        };
+    </script>
+
+
     <style>
         .outer-container {
             max-width: 700px;
@@ -35,25 +74,6 @@
     <script>
         const app = {
             static: {
-                default_config: {
-                    "definitions": [
-                        {
-                            "title": "DuckDuckGo",
-                            "url_tmpl": "https://duckduckgo.com/?search=%s",
-                            "shortcuts": [
-                                "d",
-                                "ddg"
-                            ]
-                        },
-                        {
-                            "title": "Google",
-                            "url_tmpl": "https://www.google.com/search?q=%s",
-                            "shortcuts": [
-                                "g"
-                            ]
-                        }
-                    ]
-                },
                 LSKEY_config_json: '155097ce-8be1-469c-b390-15bda28ad904'
             },
             RAM: {
@@ -63,7 +83,7 @@
         app.init = function () {
             // Focus and select search term
             const inputBar = document.querySelector('#js-mainInputBar')
-            const placeOfFirstSpace = inputBar.value.indexOf(' ')+1;
+            const placeOfFirstSpace = inputBar.value.indexOf(' ') + 1;
             inputBar.setSelectionRange(placeOfFirstSpace, inputBar.value.length);
 
             // Load config
@@ -80,10 +100,10 @@
                 try {
                     app.RAM.config = JSON.parse(localStorage.getItem(app.static.LSKEY_config_json));
                 } catch (e) {
-                    app.RAM.config = JSON.parse(JSON.stringify(app.static.default_config));
+                    app.RAM.config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
                 }
             } else {
-                app.RAM.config = JSON.parse(JSON.stringify(app.static.default_config));
+                app.RAM.config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
             };
             // Now config is ready
             app.flushConfigTextArea()
@@ -108,6 +128,7 @@
             const dest_url = engineObj.url_tmpl.replace('%s', encoded_query);
             console.log('Jumping...');
             console.log(dest_url);
+            location.href = dest_url;
         };
 
         app.flushConfigTextArea = function () {
@@ -116,6 +137,8 @@
         app.importConfigTextArea = function () {
             try {
                 app.RAM.config = JSON.parse(document.querySelector('#js-configTextArea').value);
+                // Then save to localStorage!
+                localStorage.getItem(app.static.LSKEY_config_json, JSON.stringify(app.RAM.config));
             } catch (e) {
                 console.error('Cannot parse JSON from <textarea>.')
             }
@@ -172,8 +195,25 @@
         <div id="js-configPanel">
             <h2>Configuration</h2>
             <p>You can edit the config here. You will be able to edit a form instead of the raw JSON in a later version.</p>
+            <p>You can <a href="https://github.com/neruthes/startsearch/edit/master/src/index.html">submit your definition</a> into the default config.</p>
             <textarea name="" id="js-configTextArea"></textarea>
-            <div style="padding: 15px; text-align: center;"><button id="js-importConfig">Save Config</button></div>
+            <div style="padding: 15px; text-align: center;">
+                <button id="js-importConfig">Import Config</button>
+                <button id="js-flushConfigTextArea">Export Config</button>
+                <button id="js-restoreDefaultConfigTextArea">Restore Default</button>
+                <script>
+                    document.querySelector('#js-importConfig').addEventListener('click', function () {
+                        app.importConfigTextArea();
+                    });
+                    document.querySelector('#js-flushConfigTextArea').addEventListener('click', function () {
+                        app.flushConfigTextArea();
+                    });
+                    document.querySelector('#js-restoreDefaultConfigTextArea').addEventListener('click', function () {
+                        app.RAM.config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+                        app.flushConfigTextArea();
+                    });
+                </script>
+            </div>
         </div>
     </div>
 </body>
