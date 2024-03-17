@@ -1,0 +1,19 @@
+{
+    "definitions": [
+        {
+            "title": "DuckDuckGo",
+            "url_tmpl": "https://duckduckgo.com/?search=%s",
+            "shortcuts": [
+                "d",
+                "ddg"
+            ]
+        },
+        {
+            "title": "Google",
+            "url_tmpl": "https://www.google.com/search?q=%s",
+            "shortcuts": [
+                "g"
+            ]
+        }
+    ]
+}
