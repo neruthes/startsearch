@@ -24,8 +24,8 @@ We maintain an array of search engine definitions (SEDs). Each SED looks like th
 ```json
 {
     "title": "DuckDuckGo",
-    "url_tmpl": "https://duckduckgo.com/?search=%s",
-    "shortcut": "ddg"
+    "url_tmpl": "https://duckduckgo.com/?t=h_&q=%s",
+    "shortcuts": [ "ddg" ]
 }
 ```
 

@@ -211,6 +211,8 @@
                     document.querySelector('#js-restoreDefaultConfigTextArea').addEventListener('click', function () {
                         app.RAM.config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
                         app.flushConfigTextArea();
+                        // When restoring to the default config, we also remove saved config so the user automatically follows upstream default
+                        localStorage.removeItem(app.static.LSKEY_config_json);
                     });
                 </script>
             </div>
